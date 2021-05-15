@@ -20,8 +20,8 @@ class Consumer (kafkaBrokerAddress: String) {
     consumer.subscribe(util.Arrays.asList(topic))
 
     while (true) {
-      val f = consumer.poll(Duration.ofSeconds(10)).asScala
-      f.foreach(r => processFunc(r.value))
+      consumer.poll(Duration.ofSeconds(10)).asScala
+        .foreach(r => processFunc(r.value))
     }
   }
 

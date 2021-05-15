@@ -12,4 +12,6 @@ object ProcessorMain extends App {
   finally {
     consumer.close
   }
+
 }
+

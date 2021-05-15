@@ -1,6 +1,7 @@
 package processor_service
 
-import common.Configs
+import java.time.LocalDateTime
+import common.{Configs, RedditComment}
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
 
@@ -10,10 +11,11 @@ class DataProcessor {
   dataWriter.initOutputFile()
 
   def processMessage(message: String): Unit = {
-    // todo: access consume performance logs
     // todo: wrap everything to docker
+    val redditComment = parse(message).extract[RedditComment]
     Thread.sleep(1000)
-    val dict = parse(message).extract[Map[String, Any]]
-    dataWriter.writeRecord(dict)
+    dataWriter.writeRecord(
+      redditComment.id, redditComment.author, redditComment.comment,
+      redditComment.createdAt, redditComment.processingStartedAt, LocalDateTime.now, 0) // todo: message size???
   }
 }

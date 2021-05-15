@@ -1,18 +1,18 @@
 package generator_service
 
-import common.RedditData
-
+import java.time.LocalDateTime
+import common.RedditComment
 import scala.io.Source
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
 
 class DataGenerator (fileName: String) {
-  implicit val formats = org.json4s.DefaultFormats
+  implicit private val formats = org.json4s.DefaultFormats
 
-  def processLines(processFunc: RedditData => Unit): Unit = {
+  def processLines(processFunc: RedditComment => Unit): Unit = {
     Source.fromFile(fileName).getLines
-      .map(json => (json, parse(json).extract[Map[String, Any]]))
-      .map(data => RedditData(data._2("id").toString, data._1))
-      .foreach(processFunc(_))
+      .map(parse(_).extract[Map[String, String]])
+      .map(dict => RedditComment(dict("id"), dict("author"), dict("body"), dict("created_utc"), LocalDateTime.now))
+      .foreach(processFunc)
   }
 }
