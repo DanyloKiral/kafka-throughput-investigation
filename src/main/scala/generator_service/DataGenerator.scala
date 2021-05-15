@@ -7,12 +7,12 @@ import org.json4s._
 import org.json4s.jackson.JsonMethods._
 
 class DataGenerator (fileName: String) {
-  def processLines(processFunc: RedditData => Unit): Unit = {
-    implicit val formats = org.json4s.DefaultFormats
+  implicit val formats = org.json4s.DefaultFormats
 
+  def processLines(processFunc: RedditData => Unit): Unit = {
     Source.fromFile(fileName).getLines
-      .map(parse(_).extract[Map[String, Any]])
-      .map(dict => RedditData(dict("id").toString, dict("description").toString))
+      .map(json => (json, parse(json).extract[Map[String, Any]]))
+      .map(data => RedditData(data._2("id").toString, data._1))
       .foreach(processFunc(_))
   }
 }
