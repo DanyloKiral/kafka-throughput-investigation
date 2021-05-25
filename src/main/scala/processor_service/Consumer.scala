@@ -25,7 +25,6 @@ class Consumer (kafkaBrokerAddress: String) {
     }
   }
 
-  def close(): Unit = {
+  def close(): Unit =
     consumer.close
-  }
 }

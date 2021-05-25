@@ -23,3 +23,10 @@ services:
             KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
             KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
             KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+    mongo:
+        image: mongo:latest
+        container_name: mongo
+        hostname: mongo
+        ports:
+            - 27001:27017

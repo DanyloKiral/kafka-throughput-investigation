@@ -19,7 +19,6 @@ class Producer (kafkaBrokerAddress: String) (implicit mapper: ObjectMapper) {
     producer.send(record).get
   }
 
-  def close(): Unit = {
+  def close(): Unit =
     producer.close
-  }
 }

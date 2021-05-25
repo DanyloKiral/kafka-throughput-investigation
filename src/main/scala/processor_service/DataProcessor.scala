@@ -1,21 +1,22 @@
 package processor_service
 
 import java.time.LocalDateTime
-import common.{Configs, RedditComment}
+import java.time.temporal.ChronoUnit
+
+import common.{Configs, LocalDateSerializer, RedditComment}
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
 
-class DataProcessor {
-  implicit val formats = org.json4s.DefaultFormats
-  private val dataWriter = new DataWriter(Configs.OutputFileName)
-  dataWriter.initOutputFile()
+class DataProcessor (private val dataWriter: MongoDataWriter) {
+  implicit val formats = org.json4s.DefaultFormats + LocalDateSerializer
 
   def processMessage(message: String): Unit = {
-    // todo: wrap everything to docker
     val redditComment = parse(message).extract[RedditComment]
+
     Thread.sleep(1000)
-    dataWriter.writeRecord(
-      redditComment.id, redditComment.author, redditComment.comment,
-      redditComment.createdAt, redditComment.processingStartedAt, LocalDateTime.now, 0) // todo: message size???
+//    val processingTimeSec = redditComment.processingStartedAt.until(LocalDateTime.now, ChronoUnit.SECONDS)
+    val messageSizeBytes = message.getBytes.length
+
+    dataWriter.write(redditComment.id, redditComment.processingStartedAt, LocalDateTime.now, messageSizeBytes)
   }
 }
