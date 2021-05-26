@@ -14,7 +14,6 @@ class DataProcessor (private val dataWriter: MongoDataWriter) {
     val redditComment = parse(message).extract[RedditComment]
 
     Thread.sleep(1000)
-//    val processingTimeSec = redditComment.processingStartedAt.until(LocalDateTime.now, ChronoUnit.SECONDS)
     val messageSizeBytes = message.getBytes.length
 
     dataWriter.write(redditComment.id, redditComment.processingStartedAt, LocalDateTime.now, messageSizeBytes)

@@ -4,6 +4,13 @@ version := "0.1"
 
 scalaVersion := "2.13.5"
 
+assemblyMergeStrategy in assembly := {
+  case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
+  case PathList("reference.conf") => MergeStrategy.concat
+  case _ => MergeStrategy.first
+}
+
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.3" % Runtime
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % "2.10.0"
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % "2.10.0"
 libraryDependencies += "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % "2.10.0"
@@ -17,5 +24,6 @@ val AkkaHttpVersion = "10.2.4"
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion,
   "com.typesafe.akka" %% "akka-stream" % AkkaVersion,
+  "com.typesafe.akka" %% "akka-slf4j" % AkkaVersion,
   "com.typesafe.akka" %% "akka-http" % AkkaHttpVersion
 )

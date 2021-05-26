@@ -11,8 +11,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 object StatisticsMain extends App {
+  println("Statistics running")
   implicit val system = ActorSystem(Behaviors.empty, "kafka-throughput-investigation")
   implicit val executionContext = ExecutionContext.global
 
@@ -23,28 +25,34 @@ object StatisticsMain extends App {
   val serverSource: Source[Http.IncomingConnection, Future[Http.ServerBinding]] =
     Http().newServerAt(Configs.StatisticsHost, Configs.StatisticsPort).connectionSource()
 
-  try {
-    serverSource.runForeach { connection =>
-      println("Accepted new connection from " + connection.remoteAddress)
-      connection.handleWith(
-        get {
-          concat(
-            path("health") {
-              handleSync(_ => HttpResponse(StatusCodes.OK))
-            },
-            path("analytics") {
+  println(f"Server is starting on port ${Configs.StatisticsPort}")
+  serverSource.runForeach { connection =>
+    println("Accepted new connection from " + connection.remoteAddress)
+    connection.handleWith(
+      get {
+        concat(
+          path("health") {
+            handleSync(_ => HttpResponse(StatusCodes.OK))
+          },
+          path("statistics") {
+            withoutRequestTimeout {
               handle(_ => statisticsAggregator.collectStatistics()
-                  .map(data => mapper.writeValueAsString(data))
-                  .map(json => HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, json))))
+                .map(data => mapper.writeValueAsString(data))
+                .map(json => HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, json))))
             }
-          )
-        }
-      )
+          }
+        )
+      }
+    )
+  } onComplete {
+    case Success(_) => {
+      println("Success. Closing connection")
+      dataReader.close
     }
-  } catch {
-    case error: Throwable => println(error)
-  } finally {
-    // todo: find where to close
-    //dataReader.close
+    case Failure(exception) => {
+      println(f"Failure. ${exception}")
+      println("Closing connection")
+      dataReader.close
+    }
   }
 }

@@ -11,9 +11,8 @@ class Consumer (kafkaBrokerAddress: String) {
   props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBrokerAddress)
   props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer")
   props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer")
-  props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest")
+  props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
   props.put(ConsumerConfig.GROUP_ID_CONFIG, "consumer-group")
-  props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "20")
   private val consumer = new KafkaConsumer[String, String](props)
 
   def processMessages(processFunc: String => Unit, topic: String): Unit = {

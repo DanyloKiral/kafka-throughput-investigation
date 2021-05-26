@@ -1,7 +1,5 @@
 package statistics_service
 
-import java.time.LocalDateTime
-
 import common.CommentStatistics
 import org.mongodb.scala.MongoClient
 
