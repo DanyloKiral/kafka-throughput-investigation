@@ -47,8 +47,6 @@ services:
             - ./data:/data
 
     processor-service:
-        container_name: processor-service
-        hostname: processor-service
         build:
             context: ./
             dockerfile: src/main/scala/processor_service/Dockerfile

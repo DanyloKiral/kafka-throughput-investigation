@@ -16,7 +16,7 @@ class MongoDataWriter (mongoUri: String, mongoDbName: String, mongoCollectionNam
 
   def write(id: String, processingStart: LocalDateTime, processingEnd: LocalDateTime, messageSizeBytes: Int): Unit =
     collection.insertOne(CommentStatistics(id, processingStart, processingEnd, messageSizeBytes))
-      .subscribe((_: Completed) => ???)
+      .subscribe((_: Completed) => {})
 
   def close(): Unit =
     mongoClient.close
