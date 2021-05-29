@@ -1,6 +1,6 @@
 # Kafka throughput investigation
 
-##Description
+## Description
 
 Project was implemented to investigate throughput of a kafka-based solution considering different number of producers, consumers, partitions  and replicas
 
@@ -20,7 +20,7 @@ Experiments performed:
 8. One producer, a topic with 10 partitions, 10 consumers
 9. 2 producers, a topic with 10 partitions, 10 consumers
 
-##How to run 
+## How to run 
 1. Have **java, docker, sbt** installed.
 2. Unarchive "RC_2009-04.bz2" file (or any other file with Reddit comments from http://files.pushshift.io/reddit/comments/) to 'data' folder.
 3. Run **start.sh** script.
